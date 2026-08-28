@@ -1,7 +1,12 @@
+
+import BookingCard from "@/components/BookingCard";
 import { DeleteAlertDialog } from "@/components/DeleteAlertDialog";
 import EditModal from "@/components/EditModal";
 
+
 const DetailsPage = async ({ params }) => {
+
+
   const { id } = await params;
 
   const res = await fetch(`http://localhost:5000/destination/${id}`, {
@@ -25,6 +30,8 @@ const DetailsPage = async ({ params }) => {
     duration,
     description,
   } = destination;
+
+  
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -134,74 +141,8 @@ const DetailsPage = async ({ params }) => {
               </div>
             </section>
           </div>
+                  <BookingCard destination={destination} />
 
-          {/* ================= BOOKING CARD ================= */}
-          <aside className="lg:sticky lg:top-6 lg:h-fit">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg sm:p-7">
-              {/* Price */}
-              <div className="border-b border-slate-100 pb-5">
-                <p className="text-sm text-slate-500">Starting from</p>
-
-                <div className="mt-1 flex items-end gap-2">
-                  <span className="text-4xl font-bold text-cyan-600">
-                    ${price}
-                  </span>
-
-                  <span className="pb-1 text-sm text-slate-400">/ person</span>
-                </div>
-              </div>
-
-              {/* Quick Info */}
-              <div className="space-y-4 py-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">Destination</span>
-
-                  <span className="max-w-36 truncate text-right text-sm font-semibold text-slate-800">
-                    {destinationName}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">Country</span>
-
-                  <span className="text-sm font-semibold text-slate-800">
-                    {country}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">Duration</span>
-
-                  <span className="text-sm font-semibold text-slate-800">
-                    {duration}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">Departure</span>
-
-                  <span className="text-sm font-semibold text-slate-800">
-                    {departureDate}
-                  </span>
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="space-y-3">
-                <button className="w-full rounded-xl bg-cyan-500 px-5 py-3.5 text-sm font-semibold text-white shadow-md transition duration-300 hover:bg-cyan-600 hover:shadow-lg sm:text-base">
-                  Book Now
-                </button>
-
-                <button className="w-full rounded-xl border-2 border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition duration-300 hover:border-cyan-500 hover:text-cyan-600 sm:text-base">
-                  Add to Wishlist ♡
-                </button>
-              </div>
-
-              <p className="mt-4 text-center text-xs text-slate-400">
-                Secure booking • No hidden fees
-              </p>
-            </div>
-          </aside>
         </div>
       </div>
     </main>
