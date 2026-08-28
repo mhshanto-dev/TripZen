@@ -15,6 +15,7 @@ import {
   Label,
   TextField,
 } from "@heroui/react";
+import { FaGoogle } from "react-icons/fa";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,6 +50,17 @@ const LoginPage = () => {
 
       router.push("/");
       router.refresh();
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    if (error) {
+      alert(error.message);
     }
   };
 
@@ -137,6 +149,16 @@ const LoginPage = () => {
               Reset
             </Button>
           </Form>
+          {/* signup with goole  */}
+          <div>
+            <Button
+              variant="outline"
+              className="w-full sm:flex-1"
+              onPress={handleGoogleSignUp}
+            >
+              <FaGoogle /> Sign up with Google
+            </Button>
+          </div>
         </Card>
       </div>
     </main>
