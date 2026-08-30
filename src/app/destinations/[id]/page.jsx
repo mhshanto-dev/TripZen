@@ -11,12 +11,15 @@ const DetailsPage = async ({ params }) => {
     headers: await headers(),
   });
 
-  const res = await fetch(`http://localhost:5000/destination/${id}`, {
-    headers: {
-      authorization: `Bearer ${token}`,
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/destination/${id}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
     },
-    cache: "no-store",
-  });
+  );
   if (!res.ok) {
     const errorBody = await res.text();
     console.log("STATUS:", res.status, "BODY:", errorBody);

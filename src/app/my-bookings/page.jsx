@@ -21,7 +21,7 @@ const MyBookingPage = async () => {
   }
 
   const res = await fetch(
-    `http://localhost:5000/booking/user/${session.user.id}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/booking/user/${session.user.id}`,
     {
       cache: "no-store",
     },

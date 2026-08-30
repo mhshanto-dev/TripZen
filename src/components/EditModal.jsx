@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Button,
   FieldError,
@@ -12,8 +11,9 @@ import {
   TextArea,
   TextField,
 } from "@heroui/react";
-import { BiEdit } from "react-icons/bi";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { BiEdit } from "react-icons/bi";
 
 export function EditModal({ destination }) {
   const router = useRouter();
@@ -44,13 +44,16 @@ export function EditModal({ destination }) {
     console.log("Updated Data:", updatedDestination);
 
     try {
-      const res = await fetch(`http://localhost:5000/destination/${_id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/destination/${_id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedDestination),
         },
-        body: JSON.stringify(updatedDestination),
-      });
+      );
 
       const data = await res.json();
 

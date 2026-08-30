@@ -10,12 +10,15 @@ export function DeleteAlertDialog({ destination }) {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/destination/${_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/destination/${_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const data = await res.json();
 
@@ -23,7 +26,6 @@ export function DeleteAlertDialog({ destination }) {
 
       if (res.ok) {
         alert("Destination deleted successfully!");
-
 
         router.push("/destinations");
 

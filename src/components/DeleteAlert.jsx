@@ -12,12 +12,15 @@ export function DeleteAlert({ booking }) {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/booking/${_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/booking/${_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const data = await res.json();
 
