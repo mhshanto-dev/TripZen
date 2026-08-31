@@ -1,9 +1,10 @@
 import { DeleteAlert } from "@/components/DeleteAlert";
+import EditBookingModal from "@/components/EditBookingModal";
 import { auth } from "@/lib/auth";
-import { TrashBin } from "@gravity-ui/icons";
 import { headers } from "next/headers";
 
 const MyBookingPage = async () => {
+  // 23. Retrieve the user session dynamically to ensure only authenticated users can view bookings
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -20,6 +21,7 @@ const MyBookingPage = async () => {
     );
   }
 
+  // 24. Fetch the user's specific bookings directly from the API utilizing their user ID
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/booking/user/${session.user.id}`,
     {
@@ -38,18 +40,18 @@ const MyBookingPage = async () => {
       <h1 className="text-3xl font-bold">My Bookings</h1>
 
       <div className="mt-6">
+        {/* 25. Conditionally render the empty state or the bookings list for better UX */}
         {bookings.length === 0 ? (
           <p className="text-slate-500">No bookings found.</p>
         ) : (
-          // Booking informatio
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             {bookings.map((booking) => (
               <div
                 key={booking._id}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col h-full"
               >
                 {/* Image */}
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-56 overflow-hidden shrink-0">
                   <img
                     src={booking.imageUrl}
                     alt={booking.destinationName}
@@ -63,7 +65,7 @@ const MyBookingPage = async () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-5 flex flex-col grow">
                   {/* Destination Name */}
                   <h2 className="text-2xl font-bold text-slate-900">
                     {booking.destinationName}
@@ -95,25 +97,25 @@ const MyBookingPage = async () => {
                       </p>
                     </div>
 
-                    {/* Duration */}
+                    {/* Guests */}
                     <div className="rounded-xl bg-slate-50 p-3">
                       <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                        Duration
+                        Guests
                       </p>
 
                       <p className="mt-1 text-sm font-semibold text-slate-800">
-                        🕐 {booking.duration}
+                        👥 {booking.guests || 1}
                       </p>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-600">
+                  <p className="mt-4 line-clamp-2 text-sm leading-6 text-slate-600 mb-6">
                     {booking.description}
                   </p>
 
-                  {/* Footer */}
-                  <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                  {/* Footer - push to bottom */}
+                  <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
                     <div>
                       <p className="text-xs text-slate-400">Booking Status</p>
 
@@ -122,9 +124,12 @@ const MyBookingPage = async () => {
                       </p>
                     </div>
 
-                    <DeleteAlert booking={booking}/>
-
-
+                    {/* 26. Group Edit and Delete actions together in the footer for easy access */}
+                    <div className="flex bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                      <EditBookingModal booking={booking} />
+                      <div className="w-px bg-slate-200"></div>
+                      <DeleteAlert booking={booking}/>
+                    </div>
                   </div>
                 </div>
               </div>

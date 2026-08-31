@@ -1,10 +1,16 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const BookingCard = ({ destination }) => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
+  
+  // 13. Maintain local state for the number of guests to include in the booking payload
+  const [guests, setGuests] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     _id,
@@ -25,10 +31,20 @@ const BookingCard = ({ destination }) => {
   });
 
   const handleBooking = async () => {
+    // 14. Prevent booking submission if the user is not authenticated
     if (!user) {
-      alert("Please login first to book this destination.");
+      toast.error("Please login first to book this destination.");
       return;
     }
+    
+    // 15. Validate guest input before initiating the API call
+    if (guests < 1) {
+      toast.error("Please enter a valid number of guests.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const toastId = toast.loading("Processing your booking...");
 
     const bookingData = {
       userId: user.id,
@@ -40,6 +56,7 @@ const BookingCard = ({ destination }) => {
       category,
       duration,
       description,
+      guests: Number(guests), // 16. Ensure guests is cast to a number before submission
     };
 
     const { data: tokenData } = await authClient.token();
@@ -54,11 +71,18 @@ const BookingCard = ({ destination }) => {
         body: JSON.stringify(bookingData),
       });
 
-      const data = await res.json();
+      if (!res.ok) throw new Error("Failed to create booking");
 
+      const data = await res.json();
       console.log("Booking Response:", data);
+      
+      // 17. Update the loading toast to a success state upon successful booking
+      toast.success("Booking confirmed successfully!", { id: toastId });
     } catch (error) {
       console.error("Booking Error:", error);
+      toast.error("Failed to process booking. Please try again.", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -80,7 +104,6 @@ const BookingCard = ({ destination }) => {
         <div className="space-y-4 py-5">
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500">Destination</span>
-
             <span className="max-w-36 truncate text-right text-sm font-semibold text-slate-800">
               {destinationName}
             </span>
@@ -88,36 +111,39 @@ const BookingCard = ({ destination }) => {
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500">Country</span>
-
-            <span className="text-sm font-semibold text-slate-800">
-              {country}
-            </span>
+            <span className="text-sm font-semibold text-slate-800">{country}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500">Duration</span>
-
-            <span className="text-sm font-semibold text-slate-800">
-              {duration}
-            </span>
+            <span className="text-sm font-semibold text-slate-800">{duration}</span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <span className="text-sm text-slate-500">Departure</span>
-
-            <span className="text-sm font-semibold text-slate-800">
-              {formattedDate}
-            </span>
+            <span className="text-sm font-semibold text-slate-800">{formattedDate}</span>
+          </div>
+          
+          <div className="pt-2">
+            <label className="text-sm font-medium text-slate-700 mb-2 block">Number of Guests</label>
+            <input
+              type="number"
+              min="1"
+              value={guests}
+              onChange={(e) => setGuests(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 p-3 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            />
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="space-y-3">
+        <div className="space-y-3 mt-4">
           <button
             onClick={handleBooking}
-            className="w-full rounded-xl bg-cyan-500 px-5 py-3.5 text-sm font-semibold text-white shadow-md transition duration-300 hover:bg-cyan-600 hover:shadow-lg sm:text-base"
+            disabled={isSubmitting}
+            className="w-full rounded-xl bg-cyan-500 px-5 py-3.5 text-sm font-semibold text-white shadow-md transition duration-300 hover:bg-cyan-600 hover:shadow-lg sm:text-base disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Book Now
+            {isSubmitting ? "Processing..." : "Book Now"}
           </button>
         </div>
 
