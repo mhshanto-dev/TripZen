@@ -1,7 +1,14 @@
+"use client";
+
 import { Button } from "@heroui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const DestinationsCard = ({ destination }) => {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+
   const {
     _id,
     imageUrl,
@@ -12,6 +19,14 @@ const DestinationsCard = ({ destination }) => {
     category,
     duration,
   } = destination;
+
+  const handleBookNow = () => {
+    if (session?.user) {
+      router.push(`/destinations/${_id}`);
+    } else {
+      router.push("/login");
+    }
+  };
 
   return (
     <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -88,7 +103,7 @@ const DestinationsCard = ({ destination }) => {
           </Link>
 
           {/* Book Now */}
-          <Button className="w-full rounded-xl bg-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-cyan-600 hover:shadow-md sm:py-3 sm:text-base">
+          <Button onClick={handleBookNow} className="w-full rounded-xl bg-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-cyan-600 hover:shadow-md sm:py-3 sm:text-base">
             Book Now
           </Button>
         </div>

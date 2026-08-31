@@ -95,9 +95,12 @@ const Banner = () => {
             </div>
 
             {/* Search Button */}
-            <button className="rounded-xl bg-cyan-500 px-7 py-3 font-semibold uppercase transition hover:bg-cyan-600 hover:shadow-lg md:ml-3">
+            <Link
+              href="/destinations"
+              className="rounded-xl bg-cyan-500 px-7 py-3 font-semibold uppercase text-center transition hover:bg-cyan-600 hover:shadow-lg md:ml-3"
+            >
               Search
-            </button>
+            </Link>
           </div>
         </div>
       </div>
